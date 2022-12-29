@@ -20,7 +20,7 @@ boxmake create \
 ```
 or
 ```
-create \
+boxmake create \
 	--image ubuntu:22.04 \
 	--name my-ubuntu-image \
 	--no-spack
