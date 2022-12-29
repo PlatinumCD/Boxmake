@@ -55,7 +55,7 @@ def license():
 
 @cli.command()
 def version():
-    click.echo("Version: 0.0.1")
+    click.echo("Version: 0.0.3")
 
 
 # ==============

@@ -1,16 +1,16 @@
 from setuptools import setup
 
 setup(
-    name='binmake',
+    name='boxmake',
     description='Build docker containers quickly with Spack integration.',
-    version='0.0.1',
+    version='0.0.3',
     install_requires=[
         'docker',
         'click',
     ],
     entry_points={
         'console_scripts': [
-            'binmake = binmake.command_line:cli',
+            'boxmake = boxmake.command_line:cli',
         ]
     },
     long_description=open('README.md').read(),

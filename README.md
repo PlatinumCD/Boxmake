@@ -15,7 +15,7 @@ Create image
 boxmake create \
 	--image centos:8 \
 	--name my-centos-image \
-	-p py-numpy
+	-p py-numpy \
 	-p autodiff
 ```
 or
