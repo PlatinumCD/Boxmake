@@ -100,10 +100,6 @@ def create(image, name, package, spack):
 
     # OS packages (Centos)
     if 'centos' in image:
- #       centos_packages = ' '.join([
- #           'python3', 'git', 'gcc', 'gcc-c++', 'make', 'curl', 'gcc-gfortran', 'vim'
- #       ])
-
         if tag.split('.')[0] == '8':
             commands.append('yum -y --disablerepo \'*\' --enablerepo=extras swap centos-linux-repos centos-stream-repos')
             commands.append('yum -y distro-sync')
@@ -113,7 +109,6 @@ def create(image, name, package, spack):
         commands.append('yum --enablerepo epel groupinstall -y "Development Tools"')
         commands.append('yum --enablerepo epel install -y curl findutils gcc-c++ gcc gcc-gfortran git gnupg2 hostname iproute redhat-lsb-core make patch python3 python3-pip python3-setuptools unzip')
         commands.append('python3 -m pip install boto3')
-#        commands.append('yum install -y {}'.format(centos_packages))
 
 
     # Spack install
