@@ -1,4 +1,4 @@
-import conex
+import boxmake
 import docker
 import sys
 import click
@@ -9,14 +9,14 @@ import click
 
 home_options = {
   'create':  'Create a new docker image',
-  'list':    'List conex images',
+  'list':    'List boxmake images',
   'add':     'Add spack packages to a docker image',
   'remove':  'Remove spack packages to a docker image',
-  'version': 'The current version of the conex runtime'
+  'version': 'The current version of the boxmake runtime'
 }
 
 home_flags = {
-  '-h, --help':    'Help for conex',
+  '-h, --help':    'Help for boxmake',
   '-v, --version': 'Display current build version'
 }
 
@@ -24,7 +24,7 @@ class HomeGroup(click.Group):
     def format_help(self, ctx, formatter):
         click.echo('Python Version: {}'.format(sys.version))
         click.echo()
-        click.echo('\tconex is the CLI for interacting with docker images and spack packages', nl=False)
+        click.echo('\tboxmake is the CLI for interacting with docker images and spack packages', nl=False)
         click.echo()
         click.echo()
         self.format_usage(ctx, formatter)
@@ -34,7 +34,7 @@ class HomeGroup(click.Group):
     def format_usage(self, ctx, formatter):
         click.echo('Usage:')
         for usage_type in ['commands', 'flags']:
-            click.echo('  conex [{}]'.format(usage_type))
+            click.echo('  boxmake [{}]'.format(usage_type))
 
     def format_options(self, ctx, formatter):
         click.echo('Commands:')
@@ -69,7 +69,7 @@ def version():
 @click.option('--spack/--no-spack', help='download spack', default=True)
 def create(image, name, package, spack):
     print()
-    click.secho('Conex', fg='green')
+    click.secho('Boxmake', fg='green')
     print('image: ', image)
     print('name: ', name)
     print('packages: ', list(package))

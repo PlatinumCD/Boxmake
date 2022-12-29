@@ -1,7 +1,8 @@
 from setuptools import setup
 
 setup(
-    name='conex',
+    name='binmake',
+    description='Build docker containers quickly with Spack integration.',
     version='0.0.1',
     install_requires=[
         'docker',
@@ -9,7 +10,9 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'conex = conex.command_line:cli',
+            'binmake = binmake.command_line:cli',
         ]
-    }
+    },
+    long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
 )

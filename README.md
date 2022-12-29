@@ -1,10 +1,10 @@
-# Conex
+# Boxmake
 
 Build docker images quickly with Spack integration.
 
 ### Install
 ```
-pip3 install conex
+pip3 install boxmake
 ```
 
 ### Usage
@@ -12,7 +12,7 @@ pip3 install conex
 Create image
 
 ```
-conex create \
+boxmake create \
 	--image centos:8 \
 	--name my-centos-image \
 	-p py-numpy
