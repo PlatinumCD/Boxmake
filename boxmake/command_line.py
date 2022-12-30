@@ -47,7 +47,7 @@ def license():
 
 @cli.command()
 def version():
-    click.echo("Version: 0.0.5")
+    click.echo('Version: 0.0.6')
 
 
 # ==============
@@ -71,38 +71,68 @@ def create(image, name, package, spack):
     # Get docker client
     client = docker.from_env()
 
+    # Specify image to pull
+    if ':' in image:
+        os, tag = image.split(':')
+    else:
+        os, tag = image, 'latest'
 
-    # Get specified OS
-    os, tag = image.split(':')
+
+    # Pull image
     image_obj = client.images.pull(os, tag)
 
 
-    # List of commands to execute
-    commands = []
+    # Parse OS release
+    os_release_dict = {}
+    os_release = client.containers.run(image, 'cat /etc/os-release', remove=True)
+    os_release_parsed = os_release.decode().replace('\"', '').splitlines()
+    for item in os_release_parsed:
+        item_name, item_value = item.split('=')
+        os_release_dict[item_name] = item_value
+
+
+    # Parse env
+    env_dict = {}
+    env_data = client.containers.run(image, 'printenv', remove=True)
+    env_parsed = env_data.decode().replace('\"', '').splitlines()
+    for item in env_parsed:
+        item_name, item_value = item.split('=')
+        env_dict[item_name] = item_value
 
     
+    # List of commands to execute
+    commands = []
+   
+ 
     # OS packages (Ubuntu)
     if 'ubuntu' in image:
-
         ubuntu_packages = ' '.join([
-            'build-essential', 'ca-certificates', 'coreutils', 'curl', 'environment-modules', 'gfortran', 'git', 'gpg', 'lsb-release', 'python3', 'python3-distutils', 'python3-venv', 'unzip', 'zip'])
+            'build-essential', 'ca-certificates', 'coreutils', 'curl',
+            'environment-modules', 'gfortran', 'git', 'gpg', 'lsb-release',
+            'python3', 'python3-distutils', 'python3-venv', 'unzip', 'zip'
+        ])
 
         commands.append('apt-get update')
         commands.append('apt-get install -y {}'.format(ubuntu_packages))
 
 
     # OS packages (Centos)
-    if 'centos' in image:
-        if tag.split('.')[0] == '8':
+    if os_release_dict['ID'] == 'centos':
+        centos_packages = ' '.join([
+            'curl', 'findutils', 'gcc-c++', 'gcc', 'gcc-gfortran', 'git', 
+            'gnupg2', 'hostname', 'iproute', 'redhat-lsb-core', 'make', 'patch',
+            'python3', 'python3-pip', 'python3-setuptools', 'unzip'
+        ])
+
+        if os_release_dict['VERSION'] == '8':
             commands.append('yum -y --disablerepo \'*\' --enablerepo=extras swap centos-linux-repos centos-stream-repos')
             commands.append('yum -y distro-sync')
         
         commands.append('yum update -y')
         commands.append('yum install epel-release -y')
         commands.append('yum --enablerepo epel groupinstall -y "Development Tools"')
-        commands.append('yum --enablerepo epel install -y curl findutils gcc-c++ gcc gcc-gfortran git gnupg2 hostname iproute redhat-lsb-core make patch python3 python3-pip python3-setuptools unzip')
+        commands.append('yum --enablerepo epel install -y {}'.format(centos_packages))
         commands.append('python3 -m pip install boto3')
-
 
     # Spack install
     if spack:
@@ -110,17 +140,22 @@ def create(image, name, package, spack):
         commands.append('cd /spack && git checkout releases/v0.19')
         commands.append('. /spack/share/spack/setup-env.sh')
 
+        commands.append('echo export PATH={}:/spack/bin >> ~/.bashrc'.format(env_dict['PATH']))
 
-    # Spack packages
-    for pack in package:
-        commands.append('./spack/bin/spack install {}'.format(pack))
+        # Spack packages
+        for pack in package:
+            commands.append('spack install {}'.format(pack))
+        
 
-
-    # Run container
+    # Make environment
     env = {
         'PYTHONUNBUFFERED': '1',
         'DEBIAN_FRONTEND': 'noninteractive',
+        'PATH': '{}{}'.format(env_dict['PATH'], ':/spack/bin' if spack else '')
     }
+
+
+    # Run container
     container = client.containers.run(image, detach=True, tty=True)
 
     # Run commands
