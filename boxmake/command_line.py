@@ -55,7 +55,7 @@ def license():
 
 @cli.command()
 def version():
-    click.echo("Version: 0.0.3")
+    click.echo("Version: 0.0.4")
 
 
 # ==============
@@ -91,6 +91,7 @@ def create(image, name, package, spack):
     
     # OS packages (Ubuntu)
     if 'ubuntu' in image:
+
         ubuntu_packages = ' '.join([
             'build-essential', 'ca-certificates', 'coreutils', 'curl', 'environment-modules', 'gfortran', 'git', 'gpg', 'lsb-release', 'python3', 'python3-distutils', 'python3-venv', 'unzip', 'zip'])
 
@@ -126,6 +127,7 @@ def create(image, name, package, spack):
     # Run container
     env = {
         'PYTHONUNBUFFERED': '1',
+        'DEBIAN_FRONTEND': 'noninteractive',
     }
     container = client.containers.run(image,  detach=True, tty=True)
 
