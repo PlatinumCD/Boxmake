@@ -25,3 +25,18 @@ boxmake create \
 	--name my-ubuntu-image \
 	--no-spack
 ```
+
+### Examples
+
+Install intel oneapi compilers on E4S x86_64 with:
+```
+./boxmake create \
+	--image ecpe4s/ubuntu20.04-runner-x86_64:2022-12-01 \
+	--name e4s-intel \
+	-p intel-oneapi-compilers
+```
+
+### To do
+
+1. Add **Append/remove to container** feature for spack
+2. Add **List boxmake images** feature that includes description of spack packages

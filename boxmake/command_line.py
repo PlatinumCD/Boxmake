@@ -9,15 +9,10 @@ import click
 
 home_options = {
   'create':  'Create a new docker image',
-  'list':    'List boxmake images',
-  'add':     'Add spack packages to a docker image',
-  'remove':  'Remove spack packages to a docker image',
+  'list':    'List boxmake images [NOT IMPLEMENTED]',
+  'add':     'Add spack packages to a docker image [NOT IMPLEMENTED]',
+  'remove':  'Remove spack packages to a docker image [NOT IMPLEMENTED]',
   'version': 'The current version of the boxmake runtime'
-}
-
-home_flags = {
-  '-h, --help':    'Help for boxmake',
-  '-v, --version': 'Display current build version'
 }
 
 class HomeGroup(click.Group):
@@ -41,9 +36,6 @@ class HomeGroup(click.Group):
         for option, option_desc in home_options.items():
             click.echo('  {:18}{}'.format(option, option_desc))
         click.echo()
-        click.echo('Flags:')
-        for flag, flag_desc in home_flags.items():
-            click.echo('  {:18}{}'.format(flag, flag_desc))
 
 @click.group(cls=HomeGroup)
 def cli():
@@ -55,7 +47,7 @@ def license():
 
 @cli.command()
 def version():
-    click.echo("Version: 0.0.4")
+    click.echo("Version: 0.0.5")
 
 
 # ==============
@@ -129,7 +121,7 @@ def create(image, name, package, spack):
         'PYTHONUNBUFFERED': '1',
         'DEBIAN_FRONTEND': 'noninteractive',
     }
-    container = client.containers.run(image,  detach=True, tty=True)
+    container = client.containers.run(image, detach=True, tty=True)
 
     # Run commands
     for command in commands:
