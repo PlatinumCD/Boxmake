@@ -3,14 +3,14 @@ from setuptools import setup
 setup(
     name='boxmake',
     description='Build docker containers quickly with Spack integration.',
-    version='0.0.8',
+    version='0.0.9',
     install_requires=[
         'docker',
         'click',
     ],
     entry_points={
         'console_scripts': [
-            'boxmake = boxmake.command_line:cli',
+            'boxmake = boxmake.cli.cli:entry',
         ]
     },
     long_description=open('README.md').read(),
