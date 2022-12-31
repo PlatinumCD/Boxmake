@@ -47,7 +47,7 @@ def license():
 
 @cli.command()
 def version():
-    click.echo('Version: 0.0.6')
+    click.echo('Version: 0.0.8')
 
 
 # ==============
@@ -69,7 +69,7 @@ def create(image, name, package, spack):
     print()
 
     # Get docker client
-    client = docker.from_env()
+    client = docker.from_env(timeout=600)
 
     # Specify image to pull
     if ':' in image:
@@ -176,6 +176,6 @@ def create(image, name, package, spack):
 
 
     # Commit new image
-    container.stop()
     container.commit(name)
+    container.stop()
 
