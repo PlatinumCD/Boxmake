@@ -10,11 +10,13 @@ import click
 @click.command()
 @click.option('-n', '--name', required=True, help='[Required] The name of the output image')
 @click.option('-p', '--package', required=False, help='The spack packages to install', multiple=True)
-def add(name, package):
+@click.option('-a', '--os-package', required=False, help='The apt/yum packages to install', multiple=True)
+def add(name, package, os_package):
     print()
     click.secho('Boxmake', fg='green')
     print('name: ', name)
     print('packages: ', list(package))
+    print('os-packages: ', list(os_package))
     print()
 
     # Get docker client
@@ -48,7 +50,7 @@ def add(name, package):
             'build-essential', 'ca-certificates', 'coreutils', 'curl',
             'environment-modules', 'gfortran', 'git', 'gpg', 'lsb-release',
             'python3', 'python3-distutils', 'python3-venv', 'unzip', 'zip'
-        ])
+        ] + list(os_package))
         commands.append('apt-get update')
         commands.append('apt-get install -y {}'.format(ubuntu_packages))
 
@@ -58,7 +60,7 @@ def add(name, package):
             'curl', 'findutils', 'gcc-c++', 'gcc', 'gcc-gfortran', 'git', 
             'gnupg2', 'hostname', 'iproute', 'redhat-lsb-core', 'make', 'patch',
             'python3', 'python3-pip', 'python3-setuptools', 'unzip'
-        ])
+        ] + list(os_package))
 
         if os_release_dict['VERSION'] == '8':
             swap_repo = 'swap centos-linux-repos centos-stream-repos'

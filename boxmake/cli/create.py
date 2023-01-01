@@ -1,4 +1,5 @@
 import sys
+import json
 import click
 import docker
 import datetime
@@ -11,17 +12,33 @@ from boxmake.database.edit import add_entry
 # ==============
 
 @click.command()
-@click.option('-i', '--image', required=True, help='[Required] The image you would like to build')
-@click.option('-n', '--name', required=True, help='[Required] The name of the output image')
+@click.option('-f', '--file', required=False, help='The file to build an image from', type=click.Path(exists=True))
+@click.option('-i', '--image', required=False, help='[Required] The image you would like to build')
+@click.option('-n', '--name', required=False, help='[Required] The name of the output image')
 @click.option('-p', '--package', required=False, help='The spack packages to install', multiple=True)
+@click.option('-a', '--os-package', required=False, help='The spack packages to install', multiple=True, default=[])
 @click.option('--spack/--no-spack', help='Choose to skip installation of spack and packages', default=True)
-def create(image, name, package, spack):
+def create(file, image, name, package, os_package, spack):
     """Create a new docker image with spack packages"""
     print()
     click.secho('Boxmake', fg='green')
+    if file:
+        with open(file) as f:
+            file_data = json.loads(f.read())
+            image = file_data['image']
+            name = file_data['name']
+            package = file_data['spack-packages']
+            os_package = file_data['os-packages']
+
+    if not image or not name:
+        print('If no file is specified, the -i/--image and -n/--name flag is required')
+        print()
+        return
+
     print('image: ', image)
     print('name: ', name)
     print('packages: ', list(package))
+    print('os-packages: ', list(os_package))
     print('Spack: ', spack)
     print()
 
@@ -64,7 +81,7 @@ def create(image, name, package, spack):
             'build-essential', 'ca-certificates', 'coreutils', 'curl',
             'environment-modules', 'gfortran', 'git', 'gpg', 'lsb-release',
             'python3', 'python3-distutils', 'python3-venv', 'unzip', 'zip'
-        ])
+        ] + list(os_package))
         commands.append('apt-get update')
         commands.append('apt-get install -y {}'.format(ubuntu_packages))
 
@@ -74,7 +91,7 @@ def create(image, name, package, spack):
             'curl', 'findutils', 'gcc-c++', 'gcc', 'gcc-gfortran', 'git', 
             'gnupg2', 'hostname', 'iproute', 'redhat-lsb-core', 'make', 'patch',
             'python3', 'python3-pip', 'python3-setuptools', 'unzip'
-        ])
+        ] + list(os_package))
 
         if os_release_dict['VERSION'] == '8':
             swap_repo = 'swap centos-linux-repos centos-stream-repos'

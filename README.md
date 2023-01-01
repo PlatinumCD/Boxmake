@@ -3,8 +3,9 @@
 Build docker images quickly with Spack integration.
 
 ### Install
+
 ```
-pip3 install boxmake
+$ pip3 install boxmake
 ```
 
 ### Usage
@@ -12,7 +13,7 @@ pip3 install boxmake
 Create image
 
 ```
-boxmake create \
+$ boxmake create \
 	--image centos:8 \
 	--name my-centos-image \
 	-p py-numpy \
@@ -20,23 +21,65 @@ boxmake create \
 ```
 or
 ```
-boxmake create \
+$ boxmake create \
 	--image ubuntu:22.04 \
 	--name my-ubuntu-image \
 	--no-spack
 ```
+or
+```
+$ cat test.json
+
+{
+	"image": "ubuntu:22.04",
+	"name": "test-file-kokkos",
+	"spack": true,
+	"spack-packages": [
+		"kokkos"
+	],
+	"os-packages": [
+		"neovim"
+	]
+}
+
+$ boxmake create -f test.json
+```
+
+List images
+
+```
+$ ./boxmake list
+
+Boxmake images:
+====================
+
+	my-centos-image (centos:8): - 2022-01-01 00:00:00
+		+ py-numpy
+		+ autodiff
+
+	my-ubuntu-image (ubuntu:22.04): - 2022-01-01 00:00:00
+		No spack packages or spack installed
+
+	test-file-kokkos (ubuntu:22.04): - 2022-01-01 00:00:00
+		+ kokkos
+```
 
 ### Examples
 
-Install intel oneapi compilers on E4S x86_64 with:
+Create an E4S image loaded with intel oneapi compilers and create a centos:8 image loaded with kokkos in a single call:
 ```
-./boxmake create \
+$ ./boxmake create \
 	--image ecpe4s/ubuntu20.04-runner-x86_64:2022-12-01 \
 	--name e4s-intel \
-	-p intel-oneapi-compilers
+	-p intel-oneapi-compilers \ 
+&& \
+./boxmake create \
+	--image centos:8 \
+	--name centos8-kokkos \
+	-p kokkos 
 ```
 
 ### To do
 
-1. Add **Append/remove to container** feature for spack
-2. Add **List boxmake images** feature that includes description of spack packages
+1. Add **remove from image** feature for spack
+2. Add **remove image** feature
