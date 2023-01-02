@@ -1,0 +1,10 @@
+{
+	"image": "centos:8",
+	"name": "centos-8-spack-kokkos",
+	"spack": true,
+	"spack-packages": [
+		"kokkos"
+	],
+	"os-packages": [
+	]
+}

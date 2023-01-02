@@ -35,3 +35,12 @@ def read_all_entries():
     result = c.fetchall()
     conn.close()
     return result
+
+def modify_entry(name, os, packages, date):
+    conn = sqlite3.connect('{}/database.db'.format(dir_path))
+    c = conn.cursor()
+    c.execute('''UPDATE Images
+                 SET os = ?, packages = ?, date = ?
+                 WHERE name = ?''', (os, packages, date, name))
+    conn.commit()
+    conn.close()

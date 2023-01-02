@@ -63,6 +63,13 @@ Boxmake images:
 		+ kokkos
 ```
 
+Add package to image
+
+```
+$ boxmake add -n my-ubuntu-image -p kokkos -a neovim
+
+```
+
 ### Examples
 
 Create an E4S image loaded with intel oneapi compilers and create a centos:8 image loaded with kokkos in a single call:

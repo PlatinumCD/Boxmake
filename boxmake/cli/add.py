@@ -1,7 +1,10 @@
-import boxmake
 import sys
-import docker
 import click
+import docker
+import datetime
+
+import boxmake
+from boxmake.database.edit import read_entry, modify_entry
 
 # ==============
 # Add Command
@@ -78,9 +81,10 @@ def add(name, package, os_package):
         spack = client.containers.run(image, 'ls /spack/bin', remove=True)
     except docker.errors.ContainerError:
         spack = False 
-        print('Spack was not found on this image')
-        return
-   
+        if not os_package:
+            print('Spack was not found on this image')
+            return
+       
     # Spack packages
     if spack:
         for pack in package:
@@ -117,3 +121,14 @@ def add(name, package, os_package):
     container.commit(name)
     container.stop()
 
+    # Get previous entry
+    name, os_tag, prev_packages, date = read_entry(name)
+
+    # Modify database entry 
+    now = datetime.datetime.now()
+    modify_entry(
+        name,
+        os_tag,
+        ' '.join(package + prev_packages),
+        str(now)             
+    )

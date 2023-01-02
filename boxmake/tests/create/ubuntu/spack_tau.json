@@ -1,0 +1,10 @@
+{
+	"image": "ubuntu:latest",
+	"name": "ubuntu-latest-spack-tau",
+	"spack": true,
+	"spack-packages": [
+		"tau"
+	],
+	"os-packages": [
+	]
+}

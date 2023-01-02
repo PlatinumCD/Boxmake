@@ -47,7 +47,7 @@ def license():
 
 @entry.command()
 def version():
-    click.echo('Version: 0.0.10')
+    click.echo('Version: 0.0.11')
 
 entry.add_command(create)
 entry.add_command(add)

@@ -12,11 +12,11 @@ from boxmake.database.edit import add_entry
 # ==============
 
 @click.command()
-@click.option('-f', '--file', required=False, help='The file to build an image from', type=click.Path(exists=True))
-@click.option('-i', '--image', required=False, help='[Required] The image you would like to build')
-@click.option('-n', '--name', required=False, help='[Required] The name of the output image')
-@click.option('-p', '--package', required=False, help='The spack packages to install', multiple=True)
-@click.option('-a', '--os-package', required=False, help='The spack packages to install', multiple=True, default=[])
+@click.option('-f', '--file', help='The file to build an image from', type=click.Path(exists=True))
+@click.option('-i', '--image', help='[Required] The image you would like to build')
+@click.option('-n', '--name', help='[Required] The name of the output image')
+@click.option('-p', '--package', help='The spack packages to install', multiple=True)
+@click.option('-a', '--os-package', help='The spack packages to install', multiple=True, default=[])
 @click.option('--spack/--no-spack', help='Choose to skip installation of spack and packages', default=True)
 def create(file, image, name, package, os_package, spack):
     """Create a new docker image with spack packages"""
