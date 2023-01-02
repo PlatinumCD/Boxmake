@@ -108,8 +108,3 @@ Boxmake images:
 	e4s-intel (ecpe4s/ubuntu20.04-runner-x86_64:2022-12-01): - 2022-12-31 11:35:53.293490
 		+ intel-oneapi-compilers
 ```
-
-### To do
-
-1. Add **remove from image** feature for spack
-2. Add **remove image** feature

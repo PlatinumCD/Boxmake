@@ -10,10 +10,8 @@ from .list import list
 
 home_options = {
   'create':  'Create a new docker image',
-  'delete':  'Delete a boxmake image [NOT IMPLEMENTED]',
-  'list':    'List boxmake images [NOT IMPLEMENTED]',
-  'add':     'Add spack packages to a docker image [NOT IMPLEMENTED]',
-  'remove':  'Remove spack packages to a docker image [NOT IMPLEMENTED]',
+  'list':    'List boxmake images',
+  'add':     'Add spack packages to a docker image',
   'version': 'The current version of the boxmake runtime'
 }
 
@@ -47,7 +45,7 @@ def license():
 
 @entry.command()
 def version():
-    click.echo('Version: 0.0.11')
+    click.echo('Version: 0.0.12')
 
 entry.add_command(create)
 entry.add_command(add)

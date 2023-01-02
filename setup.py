@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='boxmake',
     description='Build docker containers quickly with Spack integration.',
-    version='0.0.11',
+    version='0.0.12',
     install_requires=[
         'docker',
         'click',
