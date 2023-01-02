@@ -68,6 +68,20 @@ Add package to image
 ```
 $ boxmake add -n my-ubuntu-image -p kokkos -a neovim
 
+$ boxmake list
+
+Boxmake images:
+====================
+        my-centos-image (centos:8): - 2022-01-01 00:00:00
+                + py-numpy
+                + autodiff
+
+        my-ubuntu-image (ubuntu:22.04): - 2022-01-01 00:00:00
+		+ kokkos
+
+        test-file-kokkos (ubuntu:22.04): - 2022-01-01 00:00:00
+                + kokkos
+
 ```
 
 ### Examples
