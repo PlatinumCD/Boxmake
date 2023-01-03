@@ -6,5 +6,7 @@
 		"intel-oneapi-compilers"
 	],
 	"os-packages": [
+	],
+	"copy": [
 	]
 }

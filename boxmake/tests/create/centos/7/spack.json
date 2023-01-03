@@ -5,5 +5,7 @@
 	"spack-packages": [
 	],
 	"os-packages": [
+	],
+	"copy": [
 	]
 }

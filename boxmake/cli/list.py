@@ -18,7 +18,9 @@ def list():
     image_tags = set()
     for image in client.images.list():
         for tag in image.tags:
-            name, tag_name = tag.split(':')
+            name_tag_name = tag.split(':')
+            print(name_tag_name)
+            name = name_tag_name[0]
             image_tags.add(name)
 
     seen_entries = set() 

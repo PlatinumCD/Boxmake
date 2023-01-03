@@ -6,5 +6,7 @@
 		"tau"
 	],
 	"os-packages": [
+	],
+	"copy": [
 	]
 }

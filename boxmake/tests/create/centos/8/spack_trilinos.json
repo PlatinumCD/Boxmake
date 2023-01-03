@@ -6,5 +6,7 @@
 		"trilinos"
 	],
 	"os-packages": [
+	],
+	"copy": [
 	]
 }

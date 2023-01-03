@@ -1,3 +1,4 @@
+import os
 import sys
 import click
 import docker
@@ -12,14 +13,16 @@ from boxmake.database.edit import read_entry, modify_entry
 
 @click.command()
 @click.option('-n', '--name', required=True, help='[Required] The name of the output image')
-@click.option('-p', '--package', required=False, help='The spack packages to install', multiple=True)
-@click.option('-a', '--os-package', required=False, help='The apt/yum packages to install', multiple=True)
-def add(name, package, os_package):
+@click.option('-p', '--package', help='The spack packages to install', multiple=True)
+@click.option('-a', '--os-package', help='The apt/yum packages to install', multiple=True)
+@click.option('-c', '--copy', help='The directory to copy to the image', multiple=True, default=[])
+def add(name, package, os_package, copy):
     print()
     click.secho('Boxmake', fg='green')
     print('name: ', name)
     print('packages: ', list(package))
     print('os-packages: ', list(os_package))
+    print('Copy: ', list(copy))
     print()
 
     # Get docker client
@@ -51,8 +54,8 @@ def add(name, package, os_package):
     if os_release_dict['ID'] == 'ubuntu':
         ubuntu_packages = ' '.join([
             'build-essential', 'ca-certificates', 'coreutils', 'curl',
-            'environment-modules', 'gfortran', 'git', 'gpg', 'lsb-release',
-            'python3', 'python3-distutils', 'python3-venv', 'unzip', 'zip'
+            'environment-modules', 'gfortran', 'git', 'gpg', 'lsb-release', 'vim',
+            'python3', 'python3-distutils', 'python3-venv', 'unzip', 'zip', 'cmake'
         ] + list(os_package))
         commands.append('apt-get update')
         commands.append('apt-get install -y {}'.format(ubuntu_packages))
@@ -62,7 +65,7 @@ def add(name, package, os_package):
         centos_packages = ' '.join([
             'curl', 'findutils', 'gcc-c++', 'gcc', 'gcc-gfortran', 'git', 
             'gnupg2', 'hostname', 'iproute', 'redhat-lsb-core', 'make', 'patch',
-            'python3', 'python3-pip', 'python3-setuptools', 'unzip'
+            'python3', 'python3-pip', 'python3-setuptools', 'unzip', 'vim', 'cmake'
         ] + list(os_package))
 
         if os_release_dict['VERSION'] == '8':
@@ -81,7 +84,7 @@ def add(name, package, os_package):
         spack = client.containers.run(image, 'ls /spack/bin', remove=True)
     except docker.errors.ContainerError:
         spack = False 
-        if not os_package:
+        if not os_package and not copy:
             print('Spack was not found on this image')
             return
        
@@ -97,8 +100,25 @@ def add(name, package, os_package):
         'PATH': '{}{}'.format(env_dict['PATH'], ':/spack/bin')
     }
 
+    # Make mounts
+    mounts = []
+    for copy_item in copy:
+        if ':' not in copy_item:
+            print('Invalid copy format. Use {host-path}:{image-path}')
+            return
+        host_image_path = copy_item.split(':')
+        if len(host_image_path) != 2:
+            print('Invalid copy format. Use {host-path}:{image-path}')
+            return
+        host_path, image_path = host_image_path
+        abs_host_path = os.path.abspath(host_path)
+        mount_item = '{}:/tmp/{}_mount_tmp'.format(abs_host_path, image_path)
+        mounts.append(mount_item)
+        commands.insert(0, 'cp -r /tmp/{}_mount_tmp {}'.format(image_path, image_path))
+ 
+
     # Run container
-    container = client.containers.run(image, detach=True, tty=True)
+    container = client.containers.run(image, detach=True, tty=True, volumes=mounts)
 
     # Run commands
     for command in commands:
@@ -124,11 +144,14 @@ def add(name, package, os_package):
     # Get previous entry
     name, os_tag, prev_packages, date = read_entry(name)
 
+    if prev_packages == '':
+        prev_packages = []
+
     # Modify database entry 
     now = datetime.datetime.now()
     modify_entry(
         name,
         os_tag,
-        ' '.join(package + prev_packages),
+        ' '.join(list(package) + prev_packages),
         str(now)             
     )
